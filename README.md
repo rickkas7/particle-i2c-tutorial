@@ -20,7 +20,7 @@ In I2C terminology, the Photon/Electron is the I2C Master device, and all of the
 
 ### It's an addressable bus
 
-Each I2C device on the bus has an address, which unique identifies which device the processor wants to communicate with. 
+Each I2C device on the bus has an address, which uniquely identifies which device the processor wants to communicate with. 
 
 One difficulty is that the address is only 7 bits, so there are 128 addresses. Sometimes there can be conflicts, which limit the ability to share the I2C bus. 
 
@@ -108,6 +108,7 @@ That will automatically include the necessary libraries for you.
 For an Electron, you'll probably want to do:
 
 ```
+cd clock-display
 particle compile electron . --saveTo firmware.bin
 particle flash --usb firmware.bin
 ```
