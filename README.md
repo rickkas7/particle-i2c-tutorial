@@ -350,6 +350,7 @@ As it's a bare chip, don't forget to add 4.7K or 10K pull-up resistors on SDA an
 
 Another nice thing is that you can power the MCP23008 from a 5V supply and it will provide true 5V output GPIO. This is handy if you are interfacing to something that needs true 5V for logic level high. 
 
+And if you need even more pins, [the MCP23017](https://github.com/rickkas7/MCP23017-RK) has 16 GPIO pins. You can find the documentation at the link, and its available in the community libraries as MCP23017-RK.
 
 ## ADC (Analog to Digital Converters)
 
