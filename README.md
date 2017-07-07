@@ -502,5 +502,83 @@ Additionally, the slave can find out if the master has set any registers recentl
 
 The example code and library are here [https://github.com/rickkas7/I2CSlaveRK](https://github.com/rickkas7/I2CSlaveRK).
 
+## Raspberry Pi Master, Photon I2C Slave
+
+It's possible to make a Raspberry Pi the I2C Master and use a Photon/Electron as an I2C slave. This example uses direct I2C from Raspberry Pi C++ code. You could use Wiring Pi or [Particle Pi](https://docs.particle.io/guide/getting-started/intro/raspberry-pi/), but I had trouble getting Particle Pi to work. I don't think it supports DMA I2C mode used by the library above.
+
+It may be necessary to [enable I2C mode](https://learn.adafruit.com/adafruits-raspberry-pi-lesson-4-gpio-setup/configuring-i2c) in the Linux kernel configuration of your Pi.
+
+Remember that you need pull-up resistors on SDA and SCL! 10K or 4.7K resistors to 3V3 should work. Connect SDA, SCL, and GND between the Pi and Photon (or Electron).
+
+![Raspberry Pi](images/pi.jpg)
+
+Once you have the connections made, use the i2cdetect program to see if the Photon slave can be found. It should have address 0x10, like this:
+
+```
+$ sudo i2cdetect -y 1
+     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:          -- -- -- -- -- -- -- -- -- -- -- -- -- 
+10: 10 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+70: -- -- -- -- -- -- -- -- 
+```
+
+This is the code that interacts with the I2C slave example above. This code reads register 0, which increments every second in the slave code.
+
+```
+#include <errno.h>
+#include <fcntl.h>
+#include <linux/i2c-dev.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+
+int main(int argc, char *argv[]) {
+  int file;
+  int addr = 0x10;
+
+  // Code adapted from:
+  // http://elinux.org/Interfacing_with_I2C_Devices
+  
+  if ((file = open("/dev/i2c-1",O_RDWR)) < 0) {
+    printf("Failed to open the bus.");
+    exit(1);
+  }
+  
+  if (ioctl(file,I2C_SLAVE,addr) < 0) {
+    printf("Failed to acquire bus access and/or talk to slave.\n");
+    exit(1);
+  }
+
+  char buf[6];
+  buf[0] = buf[1] = 0;
+
+  if (write(file, buf, 2) != 2) {
+    printf("Failed to write to the i2c bus.\n");
+    exit(1);
+  }
+
+  if (read(file, buf, 4) != 4) {    
+    printf("Failed to read from the i2c bus.\n");
+    exit(1);
+  }
+
+  printf("reg0=%ld\n", *(unsigned long*)buf);
+  
+  return 0;
+}
+```
+
+To run it:
+
+```
+gcc i2ctest.cpp 
+sudo ./a.out
+```
 
 
