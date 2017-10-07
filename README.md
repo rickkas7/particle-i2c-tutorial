@@ -360,6 +360,9 @@ Sometimes you want more, and in that case an I2C ADC may be what you need.
 
 Another reason is that you want to measure a voltage from a very high impedance source. The built-in ADC on the STM32F205 has trouble measuring these sources. Using an [ADC with a built-in programmable amplifier](https://www.adafruit.com/product/1083) can make it easier to measure some voltage sources. 
 
+The MCP3021 is a single channel 10-bit I2C ADC. It's inexpensive and tiny (SOT-23-5). It's not clear what applications you might need it for, but just in case here's [an example MCP3021 project](https://github.com/rickkas7/MCP3021-RK).
+
+![MCP3021 Example](images/MCP3021.jpg)
 
 ## PWM
 
