@@ -451,6 +451,8 @@ temp 22.500000C 72.500000F
 
 ![DS75 Wire1](images/ds75wire1.jpg)
 
+Important note: Even though there are two sets of pins, for all practical purposes you can't use both Wire and Wire1 at the same time. It's not like having two separate I2C interfaces, because they're connected to the same I2C block in the STM32F205 processor, I2C1, and if you try to initialize both, weird things happen. If you need to connect to multiple I2C busses, use a TCA9548A instead.
+
 ## Control Everything
 
 [Control Everything](https://shop.controleverything.com) makes a large number of sensors boards for the Photon and Electron. For I2C sensors, one of the nice things is that the boards connect with 4-conductor locking ribbon cables, so you can use them as-is in permanent installation.
